@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>115學年度｜國小教科書版本・自動選書</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",
+  "PingFang TC","Microsoft JhengHei",sans-serif;
+  background:#f7f4ef;
+  color:#3d3d3d;
+}
+
+.header{
+  background:linear-gradient(135deg,#fff8e9,#f4eee5);
+  padding:28px 20px 24px;
+  text-align:center;
+  border-radius:0 0 28px 28px;
+}
+
+.logo{
+  font-size:14px;
+  color:#9a876e;
+  letter-spacing:2px;
+  margin-bottom:6px;
+}
+
+h1{
+  margin:0;
+  font-size:25px;
+  font-weight:800;
+}
+
+.subtitle{
+  margin-top:8px;
+  color:#8a8177;
+  font-size:14px;
+}
+
+.container{
+  max-width:680px;
+  margin:auto;
+  padding:18px 16px 40px;
+}
+
+.panel{
+  background:white;
+  border-radius:22px;
+  padding:20px;
+  box-shadow:0 5px 20px rgba(80,60,40,.07);
+}
+
+.section-title{
+  font-size:18px;
+  font-weight:800;
+  margin-bottom:16px;
+}
+
+.field{
+  margin-bottom:15px;
+}
+
+label{
+  display:block;
+  font-size:14px;
+  font-weight:700;
+  margin-bottom:7px;
+}
+
+select{
+  width:100%;
+  padding:13px 14px;
+  border:1px solid #ded8cf;
+  border-radius:13px;
+  background:#fff;
+  font-size:16px;
+  color:#444;
+  outline:none;
+}
+
+select:focus{
+  border-color:#b9a58b;
+}
+
+button{
+  width:100%;
+  border:0;
+  padding:15px;
+  border-radius:14px;
+  background:#8e7b65;
+  color:white;
+  font-size:16px;
+  font-weight:800;
+  margin-top:4px;
+}
+
+.result{
+  margin-top:20px;
+}
+
+.empty{
+  text-align:center;
+  color:#999;
+  padding:25px 10px;
+}
+
+.card{
+  background:#fff;
+  border-radius:18px;
+  padding:17px;
+  margin-bottom:12px;
+  border:1px solid #eee8df;
+}
+
+.subject{
+  font-size:18px;
+  font-weight:800;
+}
+
+.publisher{
+  margin-top:6px;
+  color:#88745e;
+  font-size:14px;
+  font-weight:700;
+}
+
+.tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:13px;
+}
+
+.tag{
+  background:#f3eee7;
+  color:#685d51;
+  padding:7px 10px;
+  border-radius:20px;
+  font-size:13px;
+}
+
+.warning{
+  margin-top:18px;
+  padding:13px;
+  background:#fff8df;
+  border-radius:13px;
+  font-size:13px;
+  line-height:1.6;
+  color:#756642;
+}
+
+.footer{
+  text-align:center;
+  color:#aaa;
+  font-size:12px;
+  margin-top:25px;
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <div class="logo">SCHOOL BOOK SELECTOR</div>
+  <h1>115 學年度｜自動選書</h1>
+  <div class="subtitle">
+    輸入學校與年級，自動整理教科書版本
+  </div>
+</header>
+
+<main class="container">
+
+<div class="panel">
+
+<div class="section-title">
+  🏫 選擇孩子的學校
+</div>
+
+<div class="field">
+<label>學制</label>
+<select>
+<option>國小</option>
+</select>
+</div>
+
+<div class="field">
+<label>學年度</label>
+<select>
+<option>115 學年度</option>
+</select>
+</div>
+
+<div class="field">
+<label>縣市</label>
+<select id="city">
+<option value="">請選擇縣市</option>
+</select>
+</div>
+
+<div class="field">
+<label>鄉鎮市區</label>
+<select id="district" disabled>
+<option value="">請先選擇縣市</option>
+</select>
+</div>
+
+<div class="field">
+<label>學校</label>
+<select id="school" disabled>
+<option value="">請先選擇鄉鎮市區</option>
+</select>
+</div>
+
+<div class="field">
+<label>年級</label>
+<select id="grade" disabled>
+<option value="">請先選擇學校</option>
+</select>
+</div>
+
+<div class="field">
+<label>學期</label>
+<select id="semester">
+<option value="上學期">上學期</option>
+<option value="下學期">下學期</option>
+</select>
+</div>
+
+<div class="field">
+<label>難易度</label>
+<select id="level">
+<option value="全部">全部</option>
+<option value="基礎">基礎</option>
+<option value="一般">一般</option>
+<option value="進階">進階</option>
+</select>
+</div>
+
+<button onclick="showResult()">
+  ✨ 自動幫我選書
+</button>
+
+</div>
+
+<div id="result" class="result">
+  <div class="panel empty">
+    請先選擇學校與年級
+  </div>
+</div>
+
+<div class="warning">
+  ⚠️ 版本資訊僅供參考，實際使用版本請以學校最新公告為準。
+</div>
+
+<div class="footer">
+  115 學年度國小教科書版本・自動選書
+</div>
+
+</main>
+
+<script>
+
+const DATA = [
+
+{
+city:"高雄市",
+district:"左營區",
+school:"屏山國民小學",
+grades:{
+"一年級":{
+"國語":"南一",
+"數學":"翰林",
+"生活":"康軒",
+"健體":"翰林"
+},
+"二年級":{
+"國語":"康軒",
+"數學":"南一",
+"生活":"翰林",
+"健體":"翰林"
+},
+"三年級":{
+"國語":"南一",
+"數學":"南一",
+"英語":"康軒 Wonder World",
+"社會":"康軒",
+"自然":"康軒",
+"藝術":"康軒",
+"健體":"康軒",
+"綜合":"康軒"
+},
+"四年級":{
+"國語":"翰林",
+"數學":"南一",
+"英語":"康軒 Wonder World",
+"社會":"康軒",
+"自然":"康軒",
+"藝術":"康軒",
+"健體":"南一",
+"綜合":"翰林"
+},
+"五年級":{
+"國語":"康軒",
+"數學":"康軒",
+"英語":"翰林 Here We Go",
+"社會":"翰林",
+"自然":"翰林",
+"藝術":"康軒",
+"健體":"南一",
+"綜合":"南一"
+},
+"六年級":{
+"國語":"南一",
+"數學":"康軒",
+"英語":"翰林 Here We Go",
+"社會":"翰林",
+"自然":"康軒",
+"藝術":"康軒",
+"健體":"南一",
+"綜合":"康軒"
+}
+}
+
+},
+
+{
+city:"桃園市",
+district:"桃園區",
+school:"新興國民小學",
+grades:{
+"一年級":{
+"國語":"南一","數學":"康軒","生活":"翰林","健體":"康軒"
+},
+"二年級":{
+"國語":"南一","數學":"康軒","生活":"翰林","健體":"康軒"
+},
+"三年級":{
+"國語":"南一","數學":"康軒","生活":"南一","健體":"康軒","英語":"康軒 Wonder World"
+},
+"四年級":{
+"國語":"南一","數學":"康軒","生活":"南一","健體":"康軒","英語":"康軒 Wonder World"
+},
+"五年級":{
+"國語":"南一","數學":"康軒","生活":"南一","健體":"康軒","英語":"康軒 Wonder World"
+},
+"六年級":{
+"國語":"南一","數學":"康軒","健體":"康軒","英語":"康軒 Wonder World"
+}
+}
+},
+
+{
+city:"高雄市",
+district:"大樹區",
+school:"九曲國民小學",
+grades:{
+"一年級":{
+"國語":"康軒","數學":"南一","生活":"翰林","健體":"康軒"
+},
+"二年級":{
+"國語":"康軒","數學":"南一","生活":"翰林","健體":"康軒"
+},
+"三年級":{
+"國語":"南一","數學":"康軒","英語":"康軒 Wonder World",
+"社會":"翰林","自然":"康軒","藝術":"翰林",
+"健體":"翰林","綜合":"南一"
+},
+"四年級":{
+"國語":"康軒","數學":"南一","英語":"何嘉仁 Super Fun",
+"社會":"翰林","自然":"康軒","藝術":"翰林",
+"健體":"翰林","綜合":"南一"
+},
+"五年級":{
+"國語":"康軒","數學":"翰林","英語":"康軒 Wonder World",
+"社會":"康軒","自然":"康軒","藝術":"康軒",
+"健體":"翰林","綜合":"翰林"
+},
+"六年級":{
+"國語":"康軒","數學":"康軒","英語":"翰林 Here We Go",
+"社會":"康軒","自然":"康軒","藝術":"康軒",
+"健體":"康軒","綜合":"翰林"
+}
+}
+},
+
+{
+city:"新北市",
+district:"新店區",
+school:"溪洲國民小學",
+grades:{
+"一年級":{
+"國語":"康軒","數學":"康軒","英語":"康軒 Cool ABC",
+"健體":"南一"
+},
+"二年級":{
+"國語":"康軒","數學":"康軒","英語":"康軒 Bravo ABC",
+"健體":"翰林"
+},
+"三年級":{
+"國語":"康軒","數學":"康軒","英語":"康軒 Wonder World",
+"社會":"南一","自然":"南一","健體":"翰林"
+},
+"四年級":{
+"國語":"南一","數學":"康軒","英語":"康軒 Wonder World",
+"社會":"翰林","自然":"翰林","健體":"翰林"
+},
+"五年級":{
+"國語":"康軒","數學":"康軒","英語":"康軒 Wonder World",
+"社會":"南一","自然":"南一","健體":"康軒"
+},
+"六年級":{
+"國語":"康軒","數學":"康軒","英語":"康軒 Wonder World",
+"健體":"南一"
+}
+}
+}
+
+];
+
+const BOOKS = {
+
+"康軒":[
+"學習自修",
+"學習評量",
+"測驗卷"
+],
+
+"翰林":[
+"小無敵自修",
+"實力評量",
+"學習卷"
+],
+
+"南一":[
+"新超群自修",
+"學習成就評量",
+"百分測驗卷"
+],
+
+"何嘉仁":[
+"複習／自修類",
+"評量類",
+"測驗類"
+]
+
+};
+
+const citySelect=document.getElementById("city");
+const districtSelect=document.getElementById("district");
+const schoolSelect=document.getElementById("school");
+const gradeSelect=document.getElementById("grade");
+
+const cities=[...new Set(DATA.map(x=>x.city))];
+
+cities.forEach(city=>{
+let option=document.createElement("option");
+option.value=city;
+option.textContent=city;
+citySelect.appendChild(option);
+});
+
+citySelect.addEventListener("change",()=>{
+
+districtSelect.innerHTML='<option value="">請選擇鄉鎮市區</option>';
+schoolSelect.innerHTML='<option value="">請先選擇鄉鎮市區</option>';
+gradeSelect.innerHTML='<option value="">請先選擇學校</option>';
+
+districtSelect.disabled=true;
+schoolSelect.disabled=true;
+gradeSelect.disabled=true;
+
+const districts=[...new Set(
+DATA.filter(x=>x.city===citySelect.value)
+.map(x=>x.district)
+)];
+
+districts.forEach(d=>{
+let option=document.createElement("option");
+option.value=d;
+option.textContent=d;
+districtSelect.appendChild(option);
+});
+
+if(districts.length){
+districtSelect.disabled=false;
+}
+
+});
+
+districtSelect.addEventListener("change",()=>{
+
+schoolSelect.innerHTML='<option value="">請選擇學校</option>';
+gradeSelect.innerHTML='<option value="">請先選擇學校</option>';
+
+schoolSelect.disabled=true;
+gradeSelect.disabled=true;
+
+const schools=DATA.filter(x=>
+x.city===citySelect.value &&
+x.district===districtSelect.value
+);
+
+schools.forEach(s=>{
+let option=document.createElement("option");
+option.value=s.school;
+option.textContent=s.school;
+schoolSelect.appendChild(option);
+});
+
+if(schools.length){
+schoolSelect.disabled=false;
+}
+
+});
+
+schoolSelect.addEventListener("change",()=>{
+
+gradeSelect.innerHTML='<option value="">請選擇年級</option>';
+gradeSelect.disabled=true;
+
+const school=DATA.find(x=>
+x.city===citySelect.value &&
+x.district===districtSelect.value &&
+x.school===schoolSelect.value
+);
+
+if(!school)return;
+
+Object.keys(school.grades).forEach(g=>{
+let option=document.createElement("option");
+option.value=g;
+option.textContent=g;
+gradeSelect.appendChild(option);
+});
+
+gradeSelect.disabled=false;
+
+});
+
+function getPublisher(book){
+
+if(book.includes("康軒")) return "康軒";
+if(book.includes("翰林")) return "翰林";
+if(book.includes("南一")) return "南一";
+if(book.includes("何嘉仁")) return "何嘉仁";
+
+return book;
+
+}
+
+function showResult(){
+
+const school=DATA.find(x=>
+x.city===citySelect.value &&
+x.district===districtSelect.value &&
+x.school===schoolSelect.value
+);
+
+const grade=gradeSelect.value;
+
+if(!school || !grade){
+
+alert("請先完整選擇學校與年級");
+return;
+
+}
+
+const subjects=school.grades[grade];
+
+let html='<div class="panel">';
+html+=`<div class="section-title">📚 ${school.school}｜${grade}</div>`;
+
+Object.entries(subjects).forEach(([subject,publisher])=>{
+
+const p=getPublisher(publisher);
+
+const books=BOOKS[p] || ["複習類","評量類","測驗類"];
+
+html+=`
+<div class="card">
+<div class="subject">${subject}</div>
+<div class="publisher">教科書版本：${publisher}</div>
+<div class="tags">
+${books.map(b=>`<span class="tag">📖 ${b}</span>`).join("")}
+</div>
+</div>
+`;
+
+});
+
+html+='</div>';
+
+document.getElementById("result").innerHTML=html;
+
+window.scrollTo({
+top:document.getElementById("result").offsetTop-15,
+behavior:"smooth"
+});
+
+}
+
+</script>
+
+</body>
+</html>
